@@ -1,24 +1,22 @@
-const pool = require("../../config/db");
+const prisma = require("../../config/prisma");
 
 async function findByIdAndEmpresa(userId, empresaId) {
-  const query = `
-    SELECT 
-      id,
-      empresa_id,
-      nombre,
-      usuario,
-      correo,
-      ultimo_acceso,
-      fecha_registro
-    FROM usuarios
-    WHERE id = $1
-      AND empresa_id = $2
-      AND deleted_at IS NULL
-    LIMIT 1
-  `;
-
-  const { rows } = await pool.query(query, [userId, empresaId]);
-  return rows[0];
+  return prisma.usuarios.findFirst({
+    where: {
+      id: userId,
+      empresa_id: empresaId,
+      deleted_at: null,
+    },
+    select: {
+      id: true,
+      empresa_id: true,
+      nombre: true,
+      usuario: true,
+      correo: true,
+      ultimo_acceso: true,
+      fecha_registro: true,
+    },
+  });
 }
 
 module.exports = {
